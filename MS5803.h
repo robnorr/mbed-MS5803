@@ -26,6 +26,7 @@
   * Revised by Robert Katzschmann
  */
 #include "mbed.h"
+#include <memory>
 
 #ifndef MS5803_H
 #define MS5803_H
@@ -73,6 +74,15 @@ public:
     {
         cs = 0;
     }
+    MS5803 (std::shared_ptr<SPI> _spi, std::shared_ptr<BusOut> _csBus, uint8_t _csAddr,
+            char ms5803_addr = ms5803_addrCH  )
+            : spi( _spi )
+            , csBus(_csBus)
+            , csAddr(_csAddr)
+            , device_address( ms5803_addr << 1 )
+            , cs(NC)
+    {
+    }
     void MS5803Init(void);
     void MS5803Reset(void);
     void MS5803ReadProm(void);
@@ -85,9 +95,39 @@ public:
 
 
 private:
+    void activateCS();
+    void deactivateCS();
+    
     std::shared_ptr<SPI>     spi;
     DigitalOut cs;
     char    device_address;
+    std::shared_ptr<BusOut> csBus;
+    uint8_t csAddr;
 
 };
+
+inline void MS5803::activateCS()
+{
+    if(cs.is_connected())
+    {
+        cs = 0;
+    }
+    else
+    {
+        csBus->write(csAddr);
+    }
+}
+
+inline void MS5803::deactivateCS()
+{
+    if(cs.is_connected())
+    {
+        cs = 1;
+    }
+    else
+    {
+        csBus->write(0x00);
+    }
+}
+
 #endif

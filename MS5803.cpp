@@ -47,10 +47,10 @@ void MS5803::MS5803Reset(void)
 {
     /* transmit out 1 byte reset command */
     ms5803_tx_data[0] = ms5803_reset;
-    cs = 1;
+    activateCS();
     // wait_us(1000);
     if ( spi->write( ms5803_tx_data, 1, ms5803_rx_data, 0 ) );
-    cs = 0;
+    deactivateCS();
     // wait_us(1000);
     //printf("send soft reset");
     wait_us(20000);
@@ -63,10 +63,10 @@ void MS5803::MS5803ReadProm(void)
     for (i=0; i<8; i++) {
         j = i;
         ms5803_tx_data[0] = ms5803_PROMread + (j<<1);
-        cs = 1;
+        activateCS();
         // wait_us(1000);
         if ( spi->write( ms5803_tx_data, 1, ms5803_rx_data, 3 ) );
-        cs = 0;
+        deactivateCS();
         // wait_us(1000);
         C[i]   = ms5803_rx_data[2] + (ms5803_rx_data[1]<<8);
     }
@@ -76,10 +76,10 @@ void MS5803::MS5803ReadProm(void)
 void MS5803::MS5803ConvertD1(void)
 {
     ms5803_tx_data[0] = ms5803_convD1;
-    cs = 1;
+    activateCS();
     // wait_us(1000);
     if ( spi->write( ms5803_tx_data, 1, ms5803_rx_data, 0 ) );
-    cs = 0;
+    deactivateCS();
     // wait_us(1000);
 }
 
@@ -87,10 +87,10 @@ void MS5803::MS5803ConvertD1(void)
 void MS5803:: MS5803ConvertD2(void)
 {
     ms5803_tx_data[0] = ms5803_convD2;
-    cs = 1;
+    activateCS();
     // wait_us(1000);
     if ( spi->write( ms5803_tx_data, 1, ms5803_rx_data, 0 ) );
-    cs = 0;
+    deactivateCS();
     // wait_us(1000);
 }
 
@@ -100,10 +100,10 @@ uint64_t MS5803::MS5803ReadADC(void)
     int32_t adc;
     wait_us(150000);
     ms5803_tx_data[0] = ms5803_ADCread;
-    cs = 1;
+    activateCS();
     // wait_us(1000);
     if ( spi->write( ms5803_tx_data, 1, ms5803_rx_data, 4 ) );
-    cs = 0;
+    deactivateCS();
     // wait_us(1000);
     adc = ms5803_rx_data[3] + (ms5803_rx_data[2]<<8) + (ms5803_rx_data[1]<<16);
     return (adc);
