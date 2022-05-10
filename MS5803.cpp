@@ -29,6 +29,7 @@
 #include <cstdint>
 #include <stdlib.h>
 #include "MS5803.h"
+#include "ThisThread.h"
 
 
 /*
@@ -98,7 +99,7 @@ void MS5803:: MS5803ConvertD2(void)
 uint64_t MS5803::MS5803ReadADC(void)
 {
     int32_t adc;
-    wait_us(150000);
+    // wait_us(150000);
     ms5803_tx_data[0] = ms5803_ADCread;
     activateCS();
     // wait_us(1000);
@@ -131,8 +132,10 @@ void MS5803::Barometer_MS5803(void)
     
     
     MS5803ConvertD1();             // start pressure conversion
+    ThisThread::sleep_for(10ms);
     D1 = MS5803ReadADC();        // read the pressure value
     MS5803ConvertD2();             // start temperature conversion
+    ThisThread::sleep_for(10ms);
     D2 = MS5803ReadADC();         // read the temperature value
 
     /* calculation according MS5803-01BA data sheet DA5803-01BA_006 */
