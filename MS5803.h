@@ -73,6 +73,7 @@ public:
             : spi( _spi ), cs(_cs), device_address( ms5803_addr << 1 ) 
     {
         cs = 0;
+        MS5803Init();
     }
     MS5803 (std::shared_ptr<SPI> _spi, std::shared_ptr<BusOut> _csBus, uint8_t _csAddr,
             char ms5803_addr = ms5803_addrCH  )
@@ -82,6 +83,7 @@ public:
             , device_address( ms5803_addr << 1 )
             , cs(NC)
     {
+        MS5803Init();
     }
     void MS5803Init(void);
     void MS5803Reset(void);
